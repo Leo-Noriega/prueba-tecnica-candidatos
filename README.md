@@ -56,17 +56,18 @@ Puedes utilizar el stack que prefieras. No evaluamos tecnologías específicas, 
 
 ### 📤 Entregables
 
-En el formulario de entrega podrás subir:
+En el formulario de entrega podrás subir un enlace (Google Drive, iCloud…etc) que contenga:
 
 - 🖼️ Capturas de pantalla o, preferentemente, un **video corto** mostrando la aplicación en funcionamiento.  
   - **Recomendamos especialmente el video** (entre 2 y 5 minutos).
 - 📦 Enlace al repositorio del código (GitHub, GitLab, etc.).
-- 🧠 Una breve explicación que incluya:
+- 🧠 Una **breve explicación en vídeo** (Si no quieres aparecer en el vídeo puede ser solo con tu voz) que incluya:
   - Las tecnologías utilizadas
   - Cómo organizaste el sistema
   - Cómo funciona la lógica de recomendación
   - Qué mejorarías o qué agregarías con más tiempo
 
+El formulario de entrega se encuentra en https://alt-94.com/prueba-tecnica
 ---
 
 ### 📁 Datos de prueba
