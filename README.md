@@ -84,3 +84,5 @@ Si te sientes con tiempo y ganas de ir más allá, puedes incorporar funcionalid
 - Filtros adicionales o paginación
 - Documentación técnica (README o breve esquema del sistema)
 
+  ### 📆 Fecha límite 3 días desde la recepción del enlace
+
