@@ -3,6 +3,55 @@
 
 ---
 
+# Por Leonardo Noriega
+
+## 🏗️ Estructura del Proyecto
+
+```
+prueba-tecnica-candidatos/
+├── src/
+│   ├── app/
+│   │   ├── favicon.ico       # Icono de la aplicación
+│   │   ├── globals.css       # Estilos globales y animaciones
+│   │   ├── layout.tsx        # Layout principal de Next.js
+│   │   └── page.tsx          # Página principal con el sistema de recomendación
+│   ├── components/
+│   │   ├── Pagination.tsx    # Componente de paginación
+│   │   ├── PropertyCard.tsx  # Tarjeta de propiedad con modal
+│   │   └── SearchAndFilters.tsx # Componente de búsqueda y filtros
+│   ├── services/
+│   │   └── propertyService.ts # Lógica de negocio y recomendaciones
+│   └── types/
+│       └── property.ts       # Definiciones de tipos TypeScript
+```
+
+## 🚀 Instrucciones de Instalación y Ejecución
+
+### Pasos para ejecutar el proyecto
+
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/Leo-Noriega/prueba-tecnica-candidatos.git
+   cd prueba-tecnica-candidatos
+   ```
+
+2. **Instalar dependencias**
+   ```bash
+   bun install
+   ```
+
+3. **Ejecutar en modo desarrollo**
+   ```bash
+   bun dev
+   ```
+
+4. **Abrir en el navegador**
+   ```
+   http://localhost:3000
+   ```
+
+---
+
 👋 ¡Hola!  
 Gracias por formar parte de este proceso. Esta prueba técnica es parte de la selección organizada por **Alt94**, una empresa especializada en el desarrollo de soluciones digitales personalizadas, integraciones inteligentes y automatizaciones a medida.
 
