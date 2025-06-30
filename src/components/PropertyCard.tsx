@@ -16,90 +16,96 @@ export default function PropertyCard({
   recommendations = []
 }: PropertyCardProps) {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(price);
+    const formatted = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return `$ ${formatted}`;
   };
 
   return (
     <div 
-      className="group relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-out overflow-hidden cursor-pointer"
+      className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl card-hover overflow-hidden cursor-pointer animate-fade-in-up"
       onClick={() => onClick?.(property)}
     >
-      {/* Image Container */}
       <div className="relative overflow-hidden">
         <img
           src={property.imagen}
           alt={property.titulo}
-          className="w-full h-48 object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+          className="w-full h-40 sm:h-52 object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
         
-        {/* Property Type Badge */}
-        <div className="absolute top-4 left-4">
-          <span className="px-3 py-1 bg-white/90 backdrop-blur-sm text-sm font-medium text-gray-800 rounded-full">
+        <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+          <span className="px-3 sm:px-4 py-1 sm:py-2 bg-white/95 backdrop-blur-sm text-xs sm:text-sm font-semibold text-gray-800 rounded-2xl shadow-lg">
             {property.tipo}
+          </span>
+        </div>
+
+        <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+          <span className="px-3 sm:px-4 py-1 sm:py-2 bg-blue-600/95 backdrop-blur-sm text-xs sm:text-sm font-bold text-white rounded-2xl shadow-lg">
+            {formatPrice(property.precio)}
           </span>
         </div>
       </div>
 
-      {/* Content */}
-      <div className="p-6 space-y-4">
-        {/* Title */}
-        <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 overflow-hidden text-ellipsis whitespace-nowrap">
+      <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
+        <h3 className="text-lg sm:text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors duration-300 overflow-hidden text-ellipsis whitespace-nowrap">
           {property.titulo}
         </h3>
 
-        {/* Location */}
-        <div className="flex items-center text-gray-600">
-          <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-            <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-          </svg>
-          <span className="text-sm">{property.ciudad}</span>
+        <div className="flex items-center text-gray-600 group-hover:text-gray-700 transition-colors duration-300">
+          <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-full flex items-center justify-center mr-2 sm:mr-3 group-hover:bg-blue-200 transition-colors duration-300">
+            <svg className="w-3 h-3 sm:w-4 sm:h-4 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <span className="text-xs sm:text-sm font-medium">{property.ciudad}</span>
         </div>
 
-        {/* Details Grid */}
-        <div className="grid grid-cols-2 gap-4 text-sm text-gray-600">
-          <div className="flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-            </svg>
-            <span>{property.ambientes} ambientes</span>
+        <div className="grid grid-cols-2 gap-3 sm:gap-6">
+          <div className="flex items-center group/item">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-2xl flex items-center justify-center mr-2 sm:mr-3 group-hover/item:bg-blue-100 transition-colors duration-300">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover/item:text-blue-600 transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900">{property.ambientes}</p>
+              <p className="text-xs text-gray-500">ambientes</p>
+            </div>
           </div>
-          <div className="flex items-center">
-            <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-            </svg>
-            <span>{property.metros_cuadrados}m²</span>
+          <div className="flex items-center group/item">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-2xl flex items-center justify-center mr-2 sm:mr-3 group-hover/item:bg-blue-100 transition-colors duration-300">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600 group-hover/item:text-blue-600 transition-colors duration-300" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div>
+              <p className="text-xs sm:text-sm font-semibold text-gray-900">{property.metros_cuadrados}m²</p>
+              <p className="text-xs text-gray-500">metros</p>
+            </div>
           </div>
         </div>
 
-        {/* Price */}
-        <div className="pt-2 border-t border-gray-100">
-          <p className="text-2xl font-bold text-blue-600">
-            {formatPrice(property.precio)}
-          </p>
+        <div className="pt-2 sm:pt-4">
+          <div className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-2xl font-semibold text-center group-hover:from-blue-700 group-hover:to-blue-800 transition-all duration-300 transform group-hover:scale-105 shadow-lg group-hover:shadow-xl text-sm sm:text-base">
+            Ver detalles
+          </div>
         </div>
       </div>
 
-      {/* Recommendations Section */}
       {showRecommendations && recommendations.length > 0 && (
-        <div className="px-6 pb-6">
-          <div className="pt-4 border-t border-gray-100">
-            <h4 className="text-sm font-medium text-gray-700 mb-3">Propiedades similares:</h4>
-            <div className="space-y-2">
+        <div className="px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6 lg:pb-8">
+          <div className="pt-4 sm:pt-6 border-t border-gray-100">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-3 sm:mb-4">Propiedades similares:</h4>
+            <div className="space-y-2 sm:space-y-3">
               {recommendations.slice(0, 2).map((rec) => (
-                <div key={rec.id} className="flex items-center space-x-3 p-2 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors duration-200">
+                <div key={rec.id} className="flex items-center space-x-3 sm:space-x-4 p-2 sm:p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-all duration-300 hover:scale-105">
                   <img 
                     src={rec.imagen} 
                     alt={rec.titulo}
-                    className="w-12 h-8 object-cover rounded"
+                    className="w-10 h-8 sm:w-14 sm:h-10 object-cover rounded-xl"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{rec.titulo}</p>
+                    <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">{rec.titulo}</p>
                     <p className="text-xs text-gray-600">{formatPrice(rec.precio)}</p>
                   </div>
                 </div>
@@ -109,8 +115,7 @@ export default function PropertyCard({
         </div>
       )}
 
-      {/* Hover Effect Overlay */}
-      <div className={`absolute inset-0 bg-blue-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none`} />
+      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
     </div>
   );
 } 
