@@ -20,7 +20,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className="scroll-smooth">
-      <body className="antialiased font-sans bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 min-h-screen">
+      <body className="antialiased font-sans bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 min-h-screen">
         {children}
       </body>
     </html>
