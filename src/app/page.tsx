@@ -1,10 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Property } from '@/types/property';
+import { Property, PropertyRecommendation } from '@/types/property';
 import { propertyService } from '@/services/propertyService';
 import PropertyCard from '@/components/PropertyCard';
 import SearchAndFilters from '@/components/SearchAndFilters';
+import Pagination from '@/components/Pagination';
 
 interface Filters {
   ciudad?: string;
@@ -18,11 +19,16 @@ export default function Home() {
   const [properties, setProperties] = useState<Property[]>([]);
   const [filteredProperties, setFilteredProperties] = useState<Property[]>([]);
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
+  const [recommendations, setRecommendations] = useState<PropertyRecommendation[]>([]);
   const [cities, setCities] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
   const [isModalClosing, setIsModalClosing] = useState(false);
   const [currentSearch, setCurrentSearch] = useState('');
   const [currentFilters, setCurrentFilters] = useState<Filters>({});
+  
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(9);
 
   useEffect(() => {
     const allProperties = propertyService.getAllProperties();
@@ -54,6 +60,44 @@ export default function Home() {
     setFilteredProperties(results);
   }, [properties, currentSearch, currentFilters]);
 
+  // Handle page adjustment when filtered results change
+  useEffect(() => {
+    const newTotalPages = Math.ceil(filteredProperties.length / itemsPerPage);
+    
+    if (currentPage > newTotalPages && newTotalPages > 0) {
+      setCurrentPage(newTotalPages);
+    } else if (newTotalPages === 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredProperties.length, itemsPerPage, currentPage]);
+
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProperties.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProperties = filteredProperties.slice(startIndex, endIndex);
+
+  const goToPage = (page: number) => {
+    setCurrentPage(Math.max(1, Math.min(page, totalPages)));
+  };
+
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const goToPreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+
+  // Scroll to top when page changes
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [currentPage]);
+
   useEffect(() => {
     if (selectedProperty) {
       document.body.style.overflow = 'hidden';
@@ -82,6 +126,9 @@ export default function Home() {
 
   const handlePropertyClick = (property: Property) => {
     setSelectedProperty(property);
+    // Obtener recomendaciones para la propiedad seleccionada
+    const propertyRecommendations = propertyService.getRecommendations(property, 3);
+    setRecommendations(propertyRecommendations);
   };
 
   const handleCloseModal = () => {
@@ -133,28 +180,47 @@ export default function Home() {
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg">
             <p className="text-gray-700 text-base sm:text-lg text-center sm:text-left">
-              Mostrando <span className="font-bold text-blue-600 text-lg sm:text-xl">{filteredProperties.length}</span> de{' '}
-              <span className="font-bold text-gray-800 text-lg sm:text-xl">{properties.length}</span> propiedades
+              Mostrando <span className="font-bold text-blue-600 text-lg sm:text-xl">{startIndex + 1}-{Math.min(endIndex, filteredProperties.length)}</span> de{' '}
+              <span className="font-bold text-gray-800 text-lg sm:text-xl">{filteredProperties.length}</span> propiedades
+              {totalPages > 1 && (
+                <span className="text-gray-600 text-sm sm:text-base ml-2">
+                  (Página {currentPage} de {totalPages})
+                </span>
+              )}
             </p>
           </div>
         </div>
 
         {filteredProperties.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {filteredProperties.map((property, index) => (
-              <div 
-                key={property.id} 
-                className="animate-fade-in-up"
-                style={{ animationDelay: `${index * 0.1}s` }}
-              >
-                <PropertyCard
-                  property={property}
-                  onClick={handlePropertyClick}
-                  showRecommendations={false}
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+              {currentProperties.map((property, index) => (
+                <div 
+                  key={property.id} 
+                  className="animate-fade-in-up"
+                  style={{ animationDelay: `${index * 0.1}s` }}
+                >
+                  <PropertyCard
+                    property={property}
+                    onClick={handlePropertyClick}
+                    showRecommendations={false}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="mt-8 sm:mt-12 animate-fade-in-up">
+                <Pagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  onPageChange={goToPage}
+                  onNextPage={goToNextPage}
+                  onPreviousPage={goToPreviousPage}
                 />
               </div>
-            ))}
-          </div>
+            )}
+          </>
         ) : (
           <div className="text-center py-12 sm:py-16 animate-fade-in-up">
             <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-lg max-w-md mx-auto">
@@ -184,11 +250,30 @@ export default function Home() {
               ? 'opacity-0 scale-95 translate-y-4' 
               : 'opacity-100 scale-100 translate-y-0'
           }`}>
-            <PropertyCard
-              property={selectedProperty}
-              onClick={() => {}}
-              showRecommendations={true}
-            />
+            <div className="h-full flex flex-col">
+              {/* Close button */}
+              <div className="absolute top-4 right-4 z-20">
+                <button
+                  onClick={handleCloseModal}
+                  className="w-10 h-10 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg hover:bg-white transition-all duration-300 hover:scale-110"
+                >
+                  <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              
+              {/* Scrollable content */}
+              <div className="flex-1 overflow-y-auto">
+                <PropertyCard
+                  property={selectedProperty}
+                  onClick={() => {}}
+                  showRecommendations={true}
+                  recommendationsData={recommendations}
+                  isModal={true}
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}
