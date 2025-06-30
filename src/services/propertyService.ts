@@ -21,7 +21,7 @@ export class PropertyService {
       const similarityScore = this.calculateSimilarity(property, otherProperty);
       const reasons = this.getSimilarityReasons(property, otherProperty);
 
-      if (similarityScore > 0.3) { // Threshold for meaningful similarity
+      if (similarityScore > 0.3) {
         recommendations.push({
           property: otherProperty,
           similarityScore,
@@ -30,7 +30,6 @@ export class PropertyService {
       }
     }
 
-    // Sort by similarity score and return top recommendations
     return recommendations
       .sort((a, b) => b.similarityScore - a.similarityScore)
       .slice(0, limit);
@@ -40,26 +39,22 @@ export class PropertyService {
     let score = 0;
     let totalFactors = 0;
 
-    // Same city (weight: 0.4)
     if (prop1.ciudad === prop2.ciudad) {
       score += 0.4;
     }
     totalFactors += 0.4;
 
-    // Same type (weight: 0.3)
     if (prop1.tipo === prop2.tipo) {
       score += 0.3;
     }
     totalFactors += 0.3;
 
-    // Price similarity (weight: 0.2)
     const priceDiff = Math.abs(prop1.precio - prop2.precio) / Math.max(prop1.precio, prop2.precio);
-    if (priceDiff <= 0.2) { // Within 20%
+    if (priceDiff <= 0.2) {
       score += 0.2 * (1 - priceDiff);
     }
     totalFactors += 0.2;
 
-    // Similar number of rooms (weight: 0.1)
     const roomDiff = Math.abs(prop1.ambientes - prop2.ambientes);
     if (roomDiff <= 1) {
       score += 0.1 * (1 - roomDiff);
