@@ -142,11 +142,11 @@ export default function Home() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200 flex items-center justify-center">
         <div className="text-center animate-fade-in-up">
           <div className="relative">
-            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div>
-            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-600 rounded-full animate-spin mx-auto" style={{ animationDelay: '0.5s' }}></div>
+            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-700 rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-blue-800 rounded-full animate-spin mx-auto" style={{ animationDelay: '0.5s' }}></div>
           </div>
           <p className="text-lg text-gray-600 font-medium">Cargando propiedades...</p>
         </div>
@@ -155,11 +155,11 @@ export default function Home() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-100 to-blue-200">
       <header className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
           <div className="text-center animate-fade-in-up">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-700 to-blue-800 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
               🏠 Sistema de Recomendación de Propiedades
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-gray-600 font-medium px-2">
@@ -180,7 +180,7 @@ export default function Home() {
         <div className="mb-6 sm:mb-8 animate-fade-in-up">
           <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg">
             <p className="text-gray-700 text-base sm:text-lg text-center sm:text-left">
-              Mostrando <span className="font-bold text-blue-600 text-lg sm:text-xl">{startIndex + 1}-{Math.min(endIndex, filteredProperties.length)}</span> de{' '}
+              Mostrando <span className="font-bold text-blue-700 text-lg sm:text-xl">{startIndex + 1}-{Math.min(endIndex, filteredProperties.length)}</span> de{' '}
               <span className="font-bold text-gray-800 text-lg sm:text-xl">{filteredProperties.length}</span> propiedades
               {totalPages > 1 && (
                 <span className="text-gray-600 text-sm sm:text-base ml-2">

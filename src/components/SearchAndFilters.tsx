@@ -81,7 +81,7 @@ export default function SearchAndFilters({ onSearch, onFilter, onClearAll, citie
           </label>
           <div className="relative group">
             <div className="absolute inset-y-0 left-0 pl-3 sm:pl-4 flex items-center pointer-events-none">
-              <svg className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 group-focus-within:text-blue-600 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg className="h-5 w-5 sm:h-6 sm:w-6 text-gray-500 group-focus-within:text-blue-700 transition-colors duration-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
             </div>
@@ -92,7 +92,7 @@ export default function SearchAndFilters({ onSearch, onFilter, onClearAll, citie
               onChange={(e) => setSearchQuery(e.target.value)}
               onClick={handleInputClick}
               onFocus={handleInputFocus}
-              className="block w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-base sm:text-lg placeholder-gray-500 text-gray-900 bg-white"
+              className="block w-full pl-10 sm:pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-700 transition-all duration-300 text-base sm:text-lg placeholder-gray-500 text-gray-900 bg-white"
               placeholder="Buscar por título, ciudad o tipo..."
             />
           </div>
@@ -107,7 +107,7 @@ export default function SearchAndFilters({ onSearch, onFilter, onClearAll, citie
               id="city"
               value={selectedCity}
               onChange={(e) => setSelectedCity(e.target.value)}
-              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white text-gray-900 text-sm sm:text-base"
+              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-700 transition-all duration-300 bg-white text-gray-900 text-sm sm:text-base"
             >
               <option value="" className="text-gray-500">Todas las ciudades</option>
               {cities.map((city) => (
@@ -124,7 +124,7 @@ export default function SearchAndFilters({ onSearch, onFilter, onClearAll, citie
               id="type"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
-              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 bg-white text-gray-900 text-sm sm:text-base"
+              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-700 transition-all duration-300 bg-white text-gray-900 text-sm sm:text-base"
             >
               <option value="" className="text-gray-500">Todos los tipos</option>
               <option value="Casa" className="text-gray-900">Casa</option>
@@ -143,7 +143,7 @@ export default function SearchAndFilters({ onSearch, onFilter, onClearAll, citie
               onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
               onClick={handleInputClick}
               onFocus={handleInputFocus}
-              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base"
+              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-700 transition-all duration-300 text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base"
               placeholder="$0"
             />
           </div>
@@ -159,7 +159,7 @@ export default function SearchAndFilters({ onSearch, onFilter, onClearAll, citie
               onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
               onClick={handleInputClick}
               onFocus={handleInputFocus}
-              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-300 text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base"
+              className="block w-full px-3 sm:px-4 py-3 sm:py-4 border-2 border-gray-200 rounded-2xl focus:ring-4 focus:ring-blue-500/20 focus:border-blue-700 transition-all duration-300 text-gray-900 bg-white placeholder-gray-500 text-sm sm:text-base"
               placeholder="$∞"
             />
           </div>

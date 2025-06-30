@@ -54,7 +54,7 @@ export default function Pagination({
         >
           ← Anterior
         </button>
-        <span className="px-4 py-2 bg-blue-600 text-white rounded-2xl font-semibold">
+        <span className="px-4 py-2 bg-blue-700 text-white rounded-2xl font-semibold">
           {currentPage} de {totalPages}
         </span>
         <button
@@ -87,7 +87,7 @@ export default function Pagination({
                 onClick={() => onPageChange(page as number)}
                 className={`px-3 py-2 rounded-xl font-semibold transition-all duration-300 ${
                   currentPage === page
-                    ? 'bg-blue-600 text-white shadow-lg'
+                    ? 'bg-blue-700 text-white shadow-lg'
                     : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white shadow-lg'
                 }`}
               >
