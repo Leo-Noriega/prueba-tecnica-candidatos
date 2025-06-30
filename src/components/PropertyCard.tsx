@@ -1,19 +1,22 @@
 'use client';
 
 import { Property } from '@/types/property';
+import { PropertyRecommendation } from '@/types/property';
 
 interface PropertyCardProps {
   property: Property;
   onClick?: (property: Property) => void;
   showRecommendations?: boolean;
-  recommendations?: Property[];
+  recommendationsData?: PropertyRecommendation[];
+  isModal?: boolean;
 }
 
 export default function PropertyCard({ 
   property, 
   onClick, 
   showRecommendations = false,
-  recommendations = []
+  recommendationsData = [],
+  isModal = false,
 }: PropertyCardProps) {
   const formatPrice = (price: number) => {
     const formatted = price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -21,29 +24,37 @@ export default function PropertyCard({
   };
 
   return (
-    <div 
-      className="group relative bg-white rounded-3xl shadow-xl hover:shadow-2xl card-hover overflow-hidden cursor-pointer animate-fade-in-up"
-      onClick={() => onClick?.(property)}
+    <div
+      className={`group relative bg-white rounded-3xl shadow-xl ${isModal ? 'animate-scale-in' : 'hover:shadow-2xl card-hover cursor-pointer animate-fade-in-up'} overflow-hidden ${isModal ? 'cursor-default' : 'cursor-pointer'}`}
+      onClick={() => !isModal && onClick?.(property)}
     >
-      <div className="relative overflow-hidden">
+      {/* Header fijo para el modal */}
+      {isModal && (
+        <div className="sticky top-0 left-0 w-full z-10 flex items-center justify-between px-6 py-4 bg-gradient-to-r from-blue-50/90 to-purple-50/90 border-b border-gray-100 rounded-t-3xl">
+          <span className="px-4 py-2 bg-blue-600 text-white text-lg font-bold rounded-2xl shadow-lg">{formatPrice(property.precio)}</span>
+        </div>
+      )}
+      <div className="relative overflow-hidden" style={isModal ? {marginTop: '0'} : {}}>
         <img
           src={property.imagen}
           alt={property.titulo}
           className="w-full h-40 sm:h-52 object-cover transition-transform duration-700 ease-out group-hover:scale-110"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
-        
-        <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-          <span className="px-3 sm:px-4 py-1 sm:py-2 bg-white/95 backdrop-blur-sm text-xs sm:text-sm font-semibold text-gray-800 rounded-2xl shadow-lg">
-            {property.tipo}
-          </span>
-        </div>
-
-        <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
-          <span className="px-3 sm:px-4 py-1 sm:py-2 bg-blue-600/95 backdrop-blur-sm text-xs sm:text-sm font-bold text-white rounded-2xl shadow-lg">
-            {formatPrice(property.precio)}
-          </span>
-        </div>
+        {!isModal && (
+          <>
+            <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500" />
+            <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
+              <span className="px-3 sm:px-4 py-1 sm:py-2 bg-white/95 backdrop-blur-sm text-xs sm:text-sm font-semibold text-gray-800 rounded-2xl shadow-lg">
+                {property.tipo}
+              </span>
+            </div>
+            <div className="absolute top-3 sm:top-4 right-3 sm:right-4">
+              <span className="px-4 py-1 sm:py-2 bg-blue-600/95 backdrop-blur-sm text-xs sm:text-sm font-bold text-white rounded-2xl shadow-lg">
+                {formatPrice(property.precio)}
+              </span>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6">
@@ -85,28 +96,37 @@ export default function PropertyCard({
           </div>
         </div>
 
-        <div className="pt-2 sm:pt-4">
-          <div className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-2xl font-semibold text-center group-hover:from-blue-700 group-hover:to-blue-800 transition-all duration-300 transform group-hover:scale-105 shadow-lg group-hover:shadow-xl text-sm sm:text-base">
-            Ver detalles
+        {!isModal && (
+          <div className="pt-2 sm:pt-4">
+            <div className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-2 sm:py-3 px-4 sm:px-6 rounded-2xl font-semibold text-center group-hover:from-blue-700 group-hover:to-blue-800 transition-all duration-300 transform group-hover:scale-105 shadow-lg group-hover:shadow-xl text-sm sm:text-base">
+              Ver detalles
+            </div>
           </div>
-        </div>
+        )}
       </div>
 
-      {showRecommendations && recommendations.length > 0 && (
+      {showRecommendations && recommendationsData.length > 0 && (
         <div className="px-4 sm:px-6 lg:px-8 pb-4 sm:pb-6 lg:pb-8">
           <div className="pt-4 sm:pt-6 border-t border-gray-100">
-            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-3 sm:mb-4">Propiedades similares:</h4>
-            <div className="space-y-2 sm:space-y-3">
-              {recommendations.slice(0, 2).map((rec) => (
-                <div key={rec.id} className="flex items-center space-x-3 sm:space-x-4 p-2 sm:p-3 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-all duration-300 hover:scale-105">
+            <h4 className="text-xs sm:text-sm font-semibold text-gray-700 mb-3 sm:mb-4">Propiedades similares recomendadas:</h4>
+            <div className="space-y-3 sm:space-y-4">
+              {recommendationsData.slice(0, 3).map((rec) => (
+                <div key={rec.property.id} className="flex items-start gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-all duration-300 hover:scale-105">
                   <img 
-                    src={rec.imagen} 
-                    alt={rec.titulo}
-                    className="w-10 h-8 sm:w-14 sm:h-10 object-cover rounded-xl"
+                    src={rec.property.imagen} 
+                    alt={rec.property.titulo}
+                    className="w-14 h-10 sm:w-20 sm:h-14 object-cover rounded-xl flex-shrink-0"
                   />
                   <div className="flex-1 min-w-0">
-                    <p className="text-xs sm:text-sm font-semibold text-gray-900 truncate">{rec.titulo}</p>
-                    <p className="text-xs text-gray-600">{formatPrice(rec.precio)}</p>
+                    <p className="text-sm font-semibold text-gray-900 truncate">{rec.property.titulo}</p>
+                    <p className="text-xs text-blue-700 font-bold mb-1">{formatPrice(rec.property.precio)}</p>
+                    <div className="flex flex-wrap gap-1">
+                      {rec.reasons.map((reason, idx) => (
+                        <span key={idx} className="inline-block bg-blue-100 text-blue-700 text-xs px-2 py-0.5 rounded-full font-medium">
+                          {reason}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -115,7 +135,9 @@ export default function PropertyCard({
         </div>
       )}
 
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
+      {!isModal && (
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-purple-600/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none rounded-3xl" />
+      )}
     </div>
   );
 } 
