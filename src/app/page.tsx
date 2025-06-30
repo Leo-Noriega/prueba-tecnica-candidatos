@@ -20,9 +20,11 @@ export default function Home() {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null);
   const [cities, setCities] = useState<string[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isModalClosing, setIsModalClosing] = useState(false);
+  const [currentSearch, setCurrentSearch] = useState('');
+  const [currentFilters, setCurrentFilters] = useState<Filters>({});
 
   useEffect(() => {
-    // Load properties and extract unique cities
     const allProperties = propertyService.getAllProperties();
     setProperties(allProperties);
     setFilteredProperties(allProperties);
@@ -32,19 +34,50 @@ export default function Home() {
     setLoading(false);
   }, []);
 
-  const handleSearch = (query: string) => {
-    if (!query.trim()) {
-      setFilteredProperties(properties);
-      return;
+  useEffect(() => {
+    let results = properties;
+
+    if (currentSearch.trim()) {
+      results = propertyService.searchProperties(currentSearch);
     }
-    
-    const searchResults = propertyService.searchProperties(query);
-    setFilteredProperties(searchResults);
+
+    if (currentFilters.ciudad || currentFilters.tipo || currentFilters.minPrice !== undefined || currentFilters.maxPrice !== undefined) {
+      results = results.filter(property => {
+        if (currentFilters.ciudad && property.ciudad !== currentFilters.ciudad) return false;
+        if (currentFilters.tipo && property.tipo !== currentFilters.tipo) return false;
+        if (currentFilters.minPrice !== undefined && property.precio < currentFilters.minPrice) return false;
+        if (currentFilters.maxPrice !== undefined && property.precio > currentFilters.maxPrice) return false;
+        return true;
+      });
+    }
+
+    setFilteredProperties(results);
+  }, [properties, currentSearch, currentFilters]);
+
+  useEffect(() => {
+    if (selectedProperty) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, [selectedProperty]);
+
+  const handleSearch = (query: string) => {
+    setCurrentSearch(query);
   };
 
   const handleFilter = (filters: Filters) => {
-    const filtered = propertyService.filterProperties(filters);
-    setFilteredProperties(filtered);
+    setCurrentFilters(filters);
+  };
+
+  const clearAll = () => {
+    setCurrentSearch('');
+    setCurrentFilters({});
+    setFilteredProperties(properties);
   };
 
   const handlePropertyClick = (property: Property) => {
@@ -52,58 +85,68 @@ export default function Home() {
   };
 
   const handleCloseModal = () => {
-    setSelectedProperty(null);
+    setIsModalClosing(true);
+    
+    setTimeout(() => {
+      setSelectedProperty(null);
+      setIsModalClosing(false);
+    }, 300);
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando propiedades...</p>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 flex items-center justify-center">
+        <div className="text-center animate-fade-in-up">
+          <div className="relative">
+            <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin mx-auto mb-6"></div>
+            <div className="absolute inset-0 w-16 h-16 border-4 border-transparent border-t-purple-600 rounded-full animate-spin mx-auto" style={{ animationDelay: '0.5s' }}></div>
+          </div>
+          <p className="text-lg text-gray-600 font-medium">Cargando propiedades...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50">
+      <header className="bg-white/80 backdrop-blur-sm shadow-lg border-b border-white/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+          <div className="text-center animate-fade-in-up">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-3 sm:mb-4 leading-tight">
               🏠 Sistema de Recomendación de Propiedades
             </h1>
-            <p className="text-lg text-gray-600">
+            <p className="text-base sm:text-lg md:text-xl text-gray-600 font-medium px-2">
               Encuentra tu próxima propiedad con recomendaciones inteligentes
             </p>
           </div>
         </div>
       </header>
 
-      {/* Main Content */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filters */}
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
         <SearchAndFilters 
           onSearch={handleSearch}
           onFilter={handleFilter}
+          onClearAll={clearAll}
           cities={cities}
         />
 
-        {/* Results Summary */}
-        <div className="mb-6">
-          <p className="text-gray-600">
-            Mostrando <span className="font-semibold text-blue-600">{filteredProperties.length}</span> de{' '}
-            <span className="font-semibold">{properties.length}</span> propiedades
-          </p>
+        <div className="mb-6 sm:mb-8 animate-fade-in-up">
+          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 sm:p-6 shadow-lg">
+            <p className="text-gray-700 text-base sm:text-lg text-center sm:text-left">
+              Mostrando <span className="font-bold text-blue-600 text-lg sm:text-xl">{filteredProperties.length}</span> de{' '}
+              <span className="font-bold text-gray-800 text-lg sm:text-xl">{properties.length}</span> propiedades
+            </p>
+          </div>
         </div>
 
-        {/* Properties Grid */}
         {filteredProperties.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {filteredProperties.map((property) => (
-              <div key={property.id} className="transform transition-all duration-300 hover:scale-105">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            {filteredProperties.map((property, index) => (
+              <div 
+                key={property.id} 
+                className="animate-fade-in-up"
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
                 <PropertyCard
                   property={property}
                   onClick={handlePropertyClick}
@@ -113,118 +156,39 @@ export default function Home() {
             ))}
           </div>
         ) : (
-          <div className="text-center py-12">
-            <div className="text-gray-400 mb-4">
-              <svg className="mx-auto h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-              </svg>
+          <div className="text-center py-12 sm:py-16 animate-fade-in-up">
+            <div className="bg-white/60 backdrop-blur-sm rounded-3xl p-8 sm:p-12 shadow-lg max-w-md mx-auto">
+              <div className="text-gray-400 mb-4 sm:mb-6">
+                <svg className="mx-auto h-12 w-12 sm:h-16 sm:w-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-2 sm:mb-3">No se encontraron propiedades</h3>
+              <p className="text-gray-600 text-sm sm:text-base">Intenta ajustar tus filtros de búsqueda</p>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No se encontraron propiedades</h3>
-            <p className="text-gray-600">Intenta ajustar tus filtros de búsqueda</p>
           </div>
         )}
       </main>
 
-      {/* Property Detail Modal */}
       {selectedProperty && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <div className="flex justify-between items-start mb-6">
-                <h2 className="text-2xl font-bold text-gray-900">{selectedProperty.titulo}</h2>
-                <button
-                  onClick={handleCloseModal}
-                  className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                >
-                  <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
-              </div>
-
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                {/* Property Details */}
-                <div>
-                  <img
-                    src={selectedProperty.imagen}
-                    alt={selectedProperty.titulo}
-                    className="w-full h-64 object-cover rounded-xl mb-6"
-                  />
-                  
-                  <div className="space-y-4">
-                    <div className="flex items-center text-gray-600">
-                      <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
-                      </svg>
-                      <span>{selectedProperty.ciudad}</span>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-4 text-sm">
-                      <div className="flex items-center text-gray-600">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                        </svg>
-                        <span>{selectedProperty.ambientes} ambientes</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                        </svg>
-                        <span>{selectedProperty.metros_cuadrados}m²</span>
-                      </div>
-                    </div>
-                    
-                    <div className="pt-4 border-t border-gray-200">
-                      <p className="text-3xl font-bold text-blue-600">
-                        {new Intl.NumberFormat('es-AR', {
-                          style: 'currency',
-                          currency: 'ARS',
-                          minimumFractionDigits: 0,
-                          maximumFractionDigits: 0,
-                        }).format(selectedProperty.precio)}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Recommendations */}
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 mb-4">Propiedades similares</h3>
-                  <div className="space-y-4">
-                    {propertyService.getRecommendations(selectedProperty, 3).map((rec) => (
-                      <div key={rec.property.id} className="bg-gray-50 rounded-xl p-4 hover:bg-gray-100 transition-colors duration-200 cursor-pointer">
-                        <div className="flex items-center space-x-4">
-                          <img
-                            src={rec.property.imagen}
-                            alt={rec.property.titulo}
-                            className="w-16 h-12 object-cover rounded-lg"
-                          />
-                          <div className="flex-1">
-                            <h4 className="font-medium text-gray-900 truncate">{rec.property.titulo}</h4>
-                            <p className="text-sm text-gray-600">{rec.property.ciudad}</p>
-                            <p className="text-sm font-semibold text-blue-600">
-                              {new Intl.NumberFormat('es-AR', {
-                                style: 'currency',
-                                currency: 'ARS',
-                                minimumFractionDigits: 0,
-                                maximumFractionDigits: 0,
-                              }).format(rec.property.precio)}
-                            </p>
-                            <div className="flex flex-wrap gap-1 mt-1">
-                              {rec.reasons.map((reason, index) => (
-                                <span key={index} className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                  {reason}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4">
+          <div 
+            className={`absolute inset-0 modal-backdrop transition-opacity duration-300 ${
+              isModalClosing ? 'opacity-0' : 'opacity-100'
+            }`}
+            onClick={handleCloseModal}
+          />
+          
+          <div className={`relative bg-white rounded-3xl max-w-5xl w-full max-h-[95vh] sm:max-h-[90vh] overflow-hidden shadow-2xl transition-all duration-300 ${
+            isModalClosing 
+              ? 'opacity-0 scale-95 translate-y-4' 
+              : 'opacity-100 scale-100 translate-y-0'
+          }`}>
+            <PropertyCard
+              property={selectedProperty}
+              onClick={() => {}}
+              showRecommendations={true}
+            />
           </div>
         </div>
       )}
